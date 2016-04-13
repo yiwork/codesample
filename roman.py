@@ -2,7 +2,7 @@
 
 import sys 
 
-roman_prefix = { 
+ROMAN_PREFIX = { 
     10000: 'M',
     5000: 'M',
     1000: 'C',
@@ -14,7 +14,7 @@ roman_prefix = {
     1: 'I',
 }
 
-roman_digit = {
+ROMAN_DIGIT = {
     10000: '??',
     5000: '?',
     1000: 'M', 
@@ -33,21 +33,21 @@ def get_roman_digit(number, base):
     if quotient >= 5:
         # do something including the half base
         if quotient == 9:
-            sys.stdout.write('%s%s' % (roman_prefix[(base*10)], roman_digit[(base*10)])) 
+            sys.stdout.write('%s%s' % (ROMAN_PREFIX[(base*10)], ROMAN_DIGIT[(base*10)])) 
         else:
-            sys.stdout.write('%s' % roman_digit[(base*5)])
+            sys.stdout.write('%s' % ROMAN_DIGIT[(base*5)])
             remaining = quotient - 5
-            sys.stdout.write('%s' % roman_digit[base] * remaining)
+            sys.stdout.write('%s' % ROMAN_DIGIT[base] * remaining)
     else:
         if quotient == 4:
             if base == 1000:
-                sys.stdout.write('%s' % roman_digit[base] * quotient)
+                sys.stdout.write('%s' % ROMAN_DIGIT[base] * quotient)
             else:
-                sys.stdout.write('%s%s' % (roman_prefix[(base*10)], roman_digit[(base*5)] )) 
+                sys.stdout.write('%s%s' % (ROMAN_PREFIX[(base*10)], ROMAN_DIGIT[(base*5)] )) 
         else:
-            sys.stdout.write('%s' % roman_digit[base] * quotient)
+            sys.stdout.write('%s' % ROMAN_DIGIT[base] * quotient)
 
-    get_roman_digit(remainder, base/10)    
+    get_ROMAN_DIGIT(remainder, base/10)    
 
 def get_largest_base(number):
     for i in range(4,0,-1):
@@ -60,7 +60,7 @@ def main(argv):
         print "Can't convert number bigger than 5000 - Romans are kinda limited"
         return     
     base = get_largest_base(number_to_convert)
-    get_roman_digit(number_to_convert, base)
+    get_ROMAN_DIGIT(number_to_convert, base)
     print ""
 
 if __name__ == "__main__":
