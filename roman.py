@@ -26,30 +26,32 @@ ROMAN_DIGIT = {
     1: 'I',
 }
 
-def get_roman_digit(number, base):
-    if base < 1: return 
-    (quotient, remainder) = divmod(number, base)
+def get_roman_digit(number, power_of_ten):
+    if power_of_ten < 1: return 
+    (quotient, remainder) = divmod(number, power_of_ten)
 
     if quotient >= 5:
-        # do something including the half base
+        # do something including the half power_of_ten
         if quotient == 9:
-            sys.stdout.write('%s%s' % (ROMAN_PREFIX[(base*10)], ROMAN_DIGIT[(base*10)])) 
+            sys.stdout.write('%s%s' % (ROMAN_PREFIX[(power_of_ten*10)], ROMAN_DIGIT[(power_of_ten*10)])) 
         else:
-            sys.stdout.write('%s' % ROMAN_DIGIT[(base*5)])
+            sys.stdout.write('%s' % ROMAN_DIGIT[(power_of_ten*5)])
             remaining = quotient - 5
-            sys.stdout.write('%s' % ROMAN_DIGIT[base] * remaining)
+            sys.stdout.write('%s' % ROMAN_DIGIT[power_of_ten] * remaining)
     else:
         if quotient == 4:
-            if base == 1000:
-                sys.stdout.write('%s' % ROMAN_DIGIT[base] * quotient)
+            if power_of_ten == 1000:
+                sys.stdout.write('%s' % ROMAN_DIGIT[power_of_ten] * quotient)
             else:
-                sys.stdout.write('%s%s' % (ROMAN_PREFIX[(base*10)], ROMAN_DIGIT[(base*5)] )) 
+                sys.stdout.write('%s%s' % (ROMAN_PREFIX[(power_of_ten*10)], ROMAN_DIGIT[(power_of_ten*5)] )) 
         else:
-            sys.stdout.write('%s' % ROMAN_DIGIT[base] * quotient)
+            sys.stdout.write('%s' % ROMAN_DIGIT[power_of_ten] * quotient)
 
-    get_ROMAN_DIGIT(remainder, base/10)    
+    get_roman_digit(remainder, power_of_ten/10)    
 
-def get_largest_base(number):
+def get_largest_power_of_ten(number):
+    if number < 10:
+        return 0
     for i in range(4,0,-1):
         if (0 < number / (10**i) < 10):
             return 10**i 
@@ -59,8 +61,9 @@ def main(argv):
     if number_to_convert >= 5000:
         print "Can't convert number bigger than 5000 - Romans are kinda limited"
         return     
-    base = get_largest_base(number_to_convert)
-    get_ROMAN_DIGIT(number_to_convert, base)
+    power_of_ten = get_largest_power_of_ten(number_to_convert)
+    print "power of then is {}".format(power_of_ten)
+    get_roman_digit(number_to_convert, power_of_ten)
     print ""
 
 if __name__ == "__main__":
