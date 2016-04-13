@@ -1,0 +1,8 @@
+---
+initial_password: $6$Zhash-hash-hash
+shell_user_defaults:
+  yi:
+    uid: 1010
+    secondary_groups: admin
+    shell: /usr/bin/zsh
+    passhash: $6$another-hash-hash-hash

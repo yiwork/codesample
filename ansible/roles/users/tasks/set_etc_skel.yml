@@ -1,0 +1,8 @@
+---
+# file: roles/core/tasks/set_etc_skel.yml
+# This task file setups default homedirectory structure and bashrc
+
+- name: create .ssh
+  file: state=directory dest=/etc/skel/.ssh owner=root group=root mode=0700
+  
+  

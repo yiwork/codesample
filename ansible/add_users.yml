@@ -1,0 +1,8 @@
+---
+# playbook to create users
+
+- hosts: "{{ dest_hosts|default(all) }}"
+  sudo: yes
+  roles:
+    - { role: users }
+

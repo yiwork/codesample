@@ -1,0 +1,31 @@
+---
+# main task file for managing users
+- name: setup etc/skel
+  include: set_etc_skel.yml
+
+- name: create shell users
+  user: >
+    name={{ item }} 
+    uid={{ shell_user_defaults[item].uid }} 
+    groups={{ shell_user_defaults[item].secondary_groups }}
+    append=yes 
+    createhome=yes 
+    shell={{ shell_user_defaults[item].shell | default( '/bin/bash' )}} 
+    update_password=on_create 
+    password={{ shell_user_defaults[item].passhash | default( initial_password )}}
+  with_items: shell_users
+  tags: create_shell_users
+
+- name: create authorized_keys file
+  copy: src="{{item}}.pubkeys" dest=/home/{{item}}/.ssh/authorized_keys owner={{item}} group={{item}} mode=0600
+  with_items: shell_users
+  tags: 
+   - create_shell_users
+   - update_ssh_keys
+
+- name: reset user sudo pass
+  user: name={{ item }} update_password=always password={{shell_user_defaults[item].passhash | default( initial_password )}}
+  with_items: shell_users
+  tags: change_sudo_password
+
+
