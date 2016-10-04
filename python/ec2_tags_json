@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import boto
+import sys
+import json
+
+def parse_tag_value(value):
+    if ',' in value:
+        values = value.split(',')
+#        parsed_values = [{subv.split(':')[0]:subv.split(':')[1]} if ':' in subv else subv for subv in values]
+        parsed_values = [{subv.split(':')[0]:subv.split(':')[1]} if ':' in subv else subv for subv in values]
+        return parsed_values
+    else:
+        return ({value.split(':')[0]:value.split(':')[1]} if ':' in value else value)
+
+instance_id = sys.argv[1]
+required_tag_names = sys.argv[2:]
+
+ec2 = boto.connect_ec2()
+try:
+    instance = ec2.get_only_instances(instance_ids = instance_id)[0]
+    tags = instance.tags
+except boto.exception.EC2ResponseError:
+    sys.exit(2)
+
+required_tag_names = [t.lower() for t in required_tag_names]
+#matching_tags = dict({k:v for k,v in tags.iteritems() if k.lower() in required_tag_names
+matching_tags = dict()
+for k,v in tags.iteritems():
+    if k.lower() in required_tag_names:
+        v = parse_tag_value(v)
+        matching_tags.update({k:v})
+
+print json.dumps(matching_tags)

@@ -1,0 +1,40 @@
+#! /usr/bin/env python
+
+import boto
+import urllib2
+import time
+import sys
+
+def expand_compound_tags(compact_tags):
+    expanded_tags = dict()
+    for tag_name,tag_value in compact_tags.iteritems():
+        if ',' in tag_value:
+            tag_values = tag_value.split(',')
+            for value_element in tag_values:
+                if ':' in value_element:
+                    new_tag_name = "{}_{}".format(tag_name, value_element.split(':')[0])
+                    expanded_tags.update({ new_tag_name: value_element.split(':')[1] })
+            
+            expanded_tags.update({tag_name: ','.join(tag_values)})
+        else:
+            expanded_tags.update({tag_name:tag_value})
+    return expanded_tags
+
+required_tag_names = sys.argv[1:]
+
+instance_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id').read()
+
+ec2 = boto.connect_ec2()
+try:
+    instance = ec2.get_only_instances(instance_ids = instance_id)[0]
+    tags = instance.tags
+except boto.exception.EC2ResponseError:
+    sys.exit(2)
+
+required_tag_names = [t.lower() for t in required_tag_names]
+expanded_tags = expand_compound_tags(tags)
+
+matching_tags = dict({k:v for k,v in expanded_tags.iteritems() if k.lower() in required_tag_names})
+
+print ' '.join(["{}={}".format(k,v) for k,v in matching_tags.iteritems()]) 
+#print matching_tags
